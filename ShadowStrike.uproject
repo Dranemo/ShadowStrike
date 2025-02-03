@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{DA660ADA-4A3D-9472-E8D4-A5A88D82B573}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "ShadowStrike",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		}
+	]
+}

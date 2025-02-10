@@ -19,8 +19,11 @@ ABasePawn::ABasePawn()
 void ABasePawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	
 }
+
 
 void ABasePawn::Tick(float DeltaTime)
 {
@@ -34,3 +37,7 @@ void ABasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+
+void ABasePawn::Fire()
+{
+}

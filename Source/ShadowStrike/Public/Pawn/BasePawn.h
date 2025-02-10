@@ -22,11 +22,17 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	virtual void Fire();
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float Speed = 10.0f;
+
+	
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UCapsuleComponent* CapsuleComponent;
 
+
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UArrowComponent* ArrowComponent;
 

@@ -1,27 +1,32 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasePawn.h"
-#include "Components/SpotLightComponent.h"
-#include "GameFramework/Pawn.h"
-#include "EnemyPawn.generated.h"
+#include "AIController.h"
+#include "AIEnemyController.generated.h"
+
+/**
+ *
+ */
+
+class USpotLightComponent;
 
 UCLASS()
-class SHADOWSTRIKE_API AEnemyPawn : public ABasePawn
+class SHADOWSTRIKE_API AAIEnemyController : public AAIController
 {
 	GENERATED_BODY()
-
+	
 public:
 	AEnemyPawn();
 
-	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
-	virtual void BeginPlay() override;
+	virtual BeginPlay() override;
 	void Patrol();
 
 	UPROPERTY(EditAnywhere, Category = "AI Properties")
 	TArray<FVector> ControlPoint;
+
+	FVector* ActualTarget;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

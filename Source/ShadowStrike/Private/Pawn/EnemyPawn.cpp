@@ -15,9 +15,8 @@ void AEnemyPawn::BeginPlay()
 	
 }
 
-void AEnemyPawn::Tick(float DeltaTime)
+void AEnemyPawn::Patrol()
 {
-	Super::Tick(DeltaTime);
-
+	
 }
 

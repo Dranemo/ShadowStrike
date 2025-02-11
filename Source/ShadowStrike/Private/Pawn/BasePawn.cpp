@@ -1,4 +1,5 @@
 #include "Pawn/BasePawn.h"
+#include "Kismet/GameplayStatics.h"
 
 ABasePawn::ABasePawn()
 {
@@ -13,6 +14,7 @@ ABasePawn::ABasePawn()
 	CharacterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character Mesh"));
 	CharacterMesh->SetupAttachment(CapsuleComponent);
 
+	
 	CharacterMovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("Character Movement"));
 }
 
@@ -37,7 +39,25 @@ void ABasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void ABasePawn::Die()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
+}
+
 
 void ABasePawn::Fire()
 {
+}
+
+void ABasePawn::Rotate(FVector LookAtTarget)
+{
+		FVector ToTarget = LookAtTarget - CharacterMesh->GetComponentLocation();
+		FRotator LookAtRotation =  FRotator(0.f, ToTarget.Rotation().Yaw - 90, 0.f);
+
+		CharacterMesh->SetWorldRotation(
+			FMath::RInterpTo(
+				CharacterMesh->GetComponentRotation(),
+				LookAtRotation,
+				UGameplayStatics::GetWorldDeltaSeconds(this),
+				InterpSpeed));
 }

@@ -26,7 +26,10 @@ public:
 	APlayerPawn();
 	bool IsHidden = false;
 
+	virtual void Die() override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -39,7 +42,6 @@ private:
 	USphereComponent* SphereCollision;
 
 	APlayerController* PlayerController;
-	void HidingBindActions(bool _bool, UEnhancedInputComponent* EnhancedInputComponent);
 
 
 protected:

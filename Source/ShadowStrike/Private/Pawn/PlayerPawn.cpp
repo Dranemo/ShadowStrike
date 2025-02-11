@@ -35,8 +35,12 @@ void APlayerPawn::BeginPlay()
 		{
 			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
+
+		PlayerController->bShowMouseCursor= true;
 	}
 }
+
+
 
 void APlayerPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -61,7 +65,27 @@ void APlayerPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 	}
 }
 
+void APlayerPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
 
+
+	if(IsHidden)
+		return;
+	
+	if (PlayerController)
+	{
+		FHitResult HitResult;
+		PlayerController->GetHitResultUnderCursor(
+			ECC_Visibility,
+			false,
+			HitResult);
+
+
+		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("RotateTurret"));
+		Rotate(HitResult.Location);
+	}
+}
 
 
 void APlayerPawn::Move(const FInputActionValue& Value)
@@ -69,9 +93,10 @@ void APlayerPawn::Move(const FInputActionValue& Value)
 	
 	if (IsHidden)
 		return;
-	
-	const FVector2d MovementVector = Value.Get<FVector2d>();
 
+	const FVector2d MovementVector = Value.Get<FVector2d>();
+	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, FString::Printf(TEXT("%s"), *MovementVector.ToString()));
+	
 	if (Controller)
 	{
 		FVector DeltaLocation = FVector::ZeroVector;
@@ -126,4 +151,10 @@ void APlayerPawn::Hide()
 
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Can't Hide");
+}
+
+
+void APlayerPawn::Die()
+{
+	Super::Die();
 }

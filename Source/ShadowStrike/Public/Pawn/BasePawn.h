@@ -17,12 +17,16 @@ class SHADOWSTRIKE_API ABasePawn : public APawn
 public:
 	ABasePawn();
 
+	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void Die();
 	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Fire();
+	virtual void Rotate(FVector LookAtTarget);
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Speed = 10.0f;
@@ -41,5 +45,8 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCharacterMovementComponent* CharacterMovementComponent;
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	float InterpSpeed = 2.f;
 };

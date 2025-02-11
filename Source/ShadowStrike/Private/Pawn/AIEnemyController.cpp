@@ -1,22 +1,23 @@
 #include "Pawn/AIEnemyController.h"
-#include "Kismet/GameplayStatics.h"
-#include "NavigationSystem.h"
 
-AAIEnemyController::AEnemyPawn()
-{
-	PrimaryActorTick.bCanEverTick = true;
-
-	SpotLightComponent = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
-	RootComponent = SpotLightComponent;
-}
+#include "Pawn/BasePawn.h"
+#include "Pawn/EnemyPawn.h"
 
 void AAIEnemyController::BeginPlay()
 {
-	AIEnemyController::BeginPlay();
-	
+	Super::BeginPlay();
+
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Test0"));
+	ControlledPawn = Cast<AEnemyPawn>(GetPawn());
+	ActualTarget = ControlledPawn->ControlPoint[0];
+	Patrol();
 }
 
 void AAIEnemyController::Patrol()
 {
-	
+	if (ControlledPawn)
+	{
+		MoveToLocation(ActualTarget);
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("IN"));
+	}
 }

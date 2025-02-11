@@ -6,17 +6,19 @@ AEnemyPawn::AEnemyPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpotLightComponent = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
-	RootComponent = SpotLightComponent;
+	SpotLightComponent->SetupAttachment(CapsuleComponent);
 }
+
 
 void AEnemyPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Pawn"));
 	
 }
 
-void AEnemyPawn::Patrol()
+void AEnemyPawn::Tick(float DeltaTime)
 {
-	
+	Super::Tick(DeltaTime);
 }
 

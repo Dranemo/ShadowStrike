@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "EnemyPawn.h"
 #include "AIEnemyController.generated.h"
 
 /**
@@ -15,20 +16,14 @@ class SHADOWSTRIKE_API AAIEnemyController : public AAIController
 {
 	GENERATED_BODY()
 	
-public:
-	AEnemyPawn();
 
-	
 protected:
-	virtual BeginPlay() override;
+	virtual void BeginPlay() override;
 	void Patrol();
 
-	UPROPERTY(EditAnywhere, Category = "AI Properties")
-	TArray<FVector> ControlPoint;
-
-	FVector* ActualTarget;
+	AEnemyPawn* ControlledPawn;
+	FVector ActualTarget;
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USpotLightComponent* SpotLightComponent;
+	
 };

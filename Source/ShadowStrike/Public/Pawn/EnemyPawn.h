@@ -16,12 +16,11 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-	virtual void BeginPlay() override;
-	void Patrol();
-
 	UPROPERTY(EditAnywhere, Category = "AI Properties")
 	TArray<FVector> ControlPoint;
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
-#include "Pawn/BasePawn.h"
-#include "PlayerPawn.generated.h"
+#include "Character/BaseCharacter.h"
+#include "PlayerCharacter.generated.h"
 
 
+class ABaseWeapon;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
@@ -18,18 +19,20 @@ class UInputMappingContext;
  * 
  */
 UCLASS()
-class SHADOWSTRIKE_API APlayerPawn : public ABasePawn
+class SHADOWSTRIKE_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
 public:
-	APlayerPawn();
+	APlayerCharacter();
 	bool IsHidden = false;
 
 	virtual void Die() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
+
+	ABaseWeapon* Weapon;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

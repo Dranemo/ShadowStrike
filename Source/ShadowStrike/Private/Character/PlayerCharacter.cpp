@@ -1,15 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Pawn/PlayerPawn.h"
+#include "Character/PlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Actor/Knife.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-APlayerPawn::APlayerPawn()
+APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -20,10 +22,10 @@ APlayerPawn::APlayerPawn()
 	Camera->SetupAttachment(SpringArm);
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollision->SetupAttachment(CapsuleComponent);
+	SphereCollision->SetupAttachment(GetCapsuleComponent());
 }
 
-void APlayerPawn::BeginPlay()
+void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -37,12 +39,16 @@ void APlayerPawn::BeginPlay()
 		}
 
 		PlayerController->bShowMouseCursor= true;
+
+
+		Weapon = CreateDefaultSubobject<AKnife>(TEXT("WeaponKnife"));
+		
 	}
 }
 
 
 
-void APlayerPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
@@ -50,22 +56,22 @@ void APlayerPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 	{
 		if (MovementAction)
 		{
-			EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &APlayerPawn::Move);
+			EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		}
 
 		if (FireAction)
 		{
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &APlayerPawn::Fire);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &APlayerCharacter::Fire);
 		}
 
 		if (HideAction)
 		{
-			EnhancedInputComponent->BindAction(HideAction, ETriggerEvent::Started, this, &APlayerPawn::Hide);
+			EnhancedInputComponent->BindAction(HideAction, ETriggerEvent::Started, this, &APlayerCharacter::Hide);
 		}
 	}
 }
 
-void APlayerPawn::Tick(float DeltaSeconds)
+void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
@@ -88,7 +94,7 @@ void APlayerPawn::Tick(float DeltaSeconds)
 }
 
 
-void APlayerPawn::Move(const FInputActionValue& Value)
+void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	
 	if (IsHidden)
@@ -101,15 +107,12 @@ void APlayerPawn::Move(const FInputActionValue& Value)
 	{
 		FVector DeltaLocation = FVector::ZeroVector;
 		DeltaLocation.X = MovementVector.Y * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
-		AddActorLocalOffset(DeltaLocation, true);
-
-		FRotator DeltaRotation = FRotator::ZeroRotator;
 		DeltaLocation.Y = MovementVector.X * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
 		AddActorLocalOffset(DeltaLocation, true);
 	}
 }
 
-void APlayerPawn::Fire()
+void APlayerCharacter::Fire()
 {
 	
 	if (IsHidden)
@@ -120,7 +123,7 @@ void APlayerPawn::Fire()
 	
 }
 
-void APlayerPawn::Hide()
+void APlayerCharacter::Hide()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Hide");
 
@@ -154,7 +157,7 @@ void APlayerPawn::Hide()
 }
 
 
-void APlayerPawn::Die()
+void APlayerCharacter::Die()
 {
 	Super::Die();
 }

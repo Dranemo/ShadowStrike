@@ -4,12 +4,12 @@
 #include "Actor/Knife.h"
 
 #include "Components/BoxComponent.h"
-#include "Pawn/BasePawn.h"
+#include "Character/BaseCharacter.h"
 
 AKnife::AKnife()
 {
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
-	TriggerBox->SetupAttachment(WeaponMesh);
+	TriggerBox->SetupAttachment(BoxComponent);
 }
 
 void AKnife::Fire()
@@ -21,7 +21,7 @@ void AKnife::Fire()
 
 	for (auto OverlappingActor : OverlappingActors)
 	{
-		if(ABasePawn* pawnActor = Cast<ABasePawn>(OverlappingActor))
+		if(ABaseCharacter* pawnActor = Cast<ABaseCharacter>(OverlappingActor))
 		{
 			pawnActor->Die();
 		}

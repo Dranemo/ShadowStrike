@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
+
+class UBoxComponent;
+
 UCLASS()
 class SHADOWSTRIKE_API ABaseWeapon : public AActor
 {
@@ -18,6 +21,11 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* BoxComponent;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh;
+
 
 };

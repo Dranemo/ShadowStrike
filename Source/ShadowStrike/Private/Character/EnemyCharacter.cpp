@@ -12,9 +12,8 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Pawn"));
-	
 }
+
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {

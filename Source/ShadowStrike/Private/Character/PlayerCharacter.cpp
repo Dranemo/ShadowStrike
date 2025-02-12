@@ -88,6 +88,11 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	if(IsHidden)
 		return;
 	
+	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, GetVelocity().ToString());
+	if(GetVelocity().Length() > 0)
+		return;
+
+	
 	if (PlayerController)
 	{
 		FHitResult HitResult;
@@ -95,9 +100,7 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 			ECC_Visibility,
 			false,
 			HitResult);
-
-
-		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("RotateTurret"));
+		
 		Rotate(HitResult.Location);
 	}
 }
@@ -110,14 +113,17 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		return;
 
 	const FVector2d MovementVector = Value.Get<FVector2d>();
-	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, FString::Printf(TEXT("%s"), *MovementVector.ToString()));
+	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, MovementVector.ToString());
 	
 	if (Controller)
-	{
+	{		
 		FVector DeltaLocation = FVector::ZeroVector;
 		DeltaLocation.X = MovementVector.Y * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
 		DeltaLocation.Y = MovementVector.X * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
-		AddActorLocalOffset(DeltaLocation, true);
+		
+		AddMovementInput(DeltaLocation);
+
+		Rotate(this->GetActorLocation() + DeltaLocation);
 	}
 }
 

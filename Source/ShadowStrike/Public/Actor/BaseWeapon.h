@@ -18,12 +18,12 @@ public:
 	ABaseWeapon();
 
 	virtual void Fire();
+	void DestroyWeapon();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
-
-private:
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh;
 

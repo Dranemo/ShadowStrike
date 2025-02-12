@@ -21,9 +21,12 @@ void AKnife::Fire()
 
 	for (auto OverlappingActor : OverlappingActors)
 	{
-		if(ABaseCharacter* pawnActor = Cast<ABaseCharacter>(OverlappingActor))
+		if(OverlappingActor != Owner)
 		{
-			pawnActor->Die();
+			if(ABaseCharacter* pawnActor = Cast<ABaseCharacter>(OverlappingActor))
+			{
+				pawnActor->Die();
+			}
 		}
 	}
 }

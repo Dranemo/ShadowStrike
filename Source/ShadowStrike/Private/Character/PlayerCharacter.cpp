@@ -10,6 +10,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Windows/WindowsApplication.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -21,8 +22,8 @@ APlayerCharacter::APlayerCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
-	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollision->SetupAttachment(GetCapsuleComponent());
+	CapsuleCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SphereCollision"));
+	CapsuleCollision->SetupAttachment(GetCapsuleComponent());
 }
 
 void APlayerCharacter::BeginPlay()
@@ -41,8 +42,11 @@ void APlayerCharacter::BeginPlay()
 		PlayerController->bShowMouseCursor= true;
 
 
-		Weapon = CreateDefaultSubobject<AKnife>(TEXT("WeaponKnife"));
-		
+		if(Weapons[0])
+		{
+			WeaponEquipped = GetWorld()->SpawnActor<AKnife>(Weapons[0]);
+			AddWeapon(WeaponEquipped);
+		}
 	}
 }
 
@@ -67,6 +71,11 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 		if (HideAction)
 		{
 			EnhancedInputComponent->BindAction(HideAction, ETriggerEvent::Started, this, &APlayerCharacter::Hide);
+		}
+		
+		if (PickUpAction)
+		{
+			EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Started, this, &APlayerCharacter::Pickup);
 		}
 	}
 }
@@ -130,7 +139,7 @@ void APlayerCharacter::Hide()
 	
 	TArray<AActor*> OverlappingActors;
 	
-	SphereCollision->GetOverlappingActors(OverlappingActors);
+	CapsuleCollision->GetOverlappingActors(OverlappingActors);
 
 	if (IsHidden)
 	{
@@ -154,6 +163,35 @@ void APlayerCharacter::Hide()
 
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Can't Hide");
+}
+
+void APlayerCharacter::Pickup()
+{
+	TArray<AActor*> OverlappingActors;
+	
+
+	if (IsHidden)
+	{
+		return;
+	}
+
+	
+	CapsuleCollision->GetOverlappingActors(OverlappingActors);
+	for (const auto OverlappingActor : OverlappingActors)
+	{
+		if (ABaseWeapon* WeaponFound = Cast<ABaseWeapon>(OverlappingActor))
+		{
+			if(WeaponFound != WeaponEquipped)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("PICKUP Weapon"));
+				AddWeapon(WeaponFound);
+				return;
+			}
+		}
+	}
+
+	
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("nothing to PICKUP"));
 }
 
 

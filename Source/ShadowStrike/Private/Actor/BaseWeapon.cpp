@@ -23,3 +23,8 @@ void ABaseWeapon::Fire()
 {
 }
 
+void ABaseWeapon::DestroyWeapon()
+{
+	Destroy();
+}
+

@@ -12,7 +12,7 @@ class ABaseWeapon;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
-class USphereComponent;
+class UCapsuleComponent;
 class UInputMappingContext;
 
 /**
@@ -32,8 +32,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	ABaseWeapon* Weapon;
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArm;
@@ -42,7 +40,7 @@ private:
 	UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USphereComponent* SphereCollision;
+	UCapsuleComponent* CapsuleCollision;
 
 	APlayerController* PlayerController;
 
@@ -51,7 +49,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Move(const FInputActionValue& Value);
 	virtual void Fire() override;
-	virtual void Hide();
+	void Hide();
+	void Pickup();
 
 	UPROPERTY(EditAnywhere, Category = "Controller")
 	UInputMappingContext* PlayerMappingContext;
@@ -64,4 +63,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Controller")
 	UInputAction* HideAction;
+
+	UPROPERTY(EditAnywhere, Category = "Controller")
+	UInputAction* PickUpAction;
 };

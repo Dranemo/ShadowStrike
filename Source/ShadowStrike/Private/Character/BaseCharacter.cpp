@@ -5,7 +5,6 @@
 ABaseCharacter::ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 	WeaponLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Projectile Location"));
 	WeaponLocation->SetupAttachment(GetMesh());
 }
@@ -13,7 +12,6 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	
 }

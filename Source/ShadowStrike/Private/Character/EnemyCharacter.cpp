@@ -16,14 +16,14 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	
-	PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	PlayerPawnCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (CheckPlayerDetection())
+	if (!PlayerPawnCharacter->IsHidden && CheckPlayerDetection())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Player Detected");
 	}
@@ -36,9 +36,9 @@ bool AEnemyCharacter::CheckPlayerDetection()
 		return false;
 	}
 	
-	if (PlayerPawn)
+	if (PlayerPawnCharacter)
 	{
-		FVector PlayerLocation = PlayerPawn->GetActorLocation();
+		FVector PlayerLocation = PlayerPawnCharacter->GetActorLocation();
 		FVector ToCharacter = (PlayerLocation - SpotLightComponent->GetComponentLocation()).GetSafeNormal();
 		float Distance = FVector(PlayerLocation - SpotLightComponent->GetComponentLocation()).Size();
 		FVector LightDirection = SpotLightComponent->GetForwardVector();
@@ -61,7 +61,7 @@ bool AEnemyCharacter::CheckPlayerDetection()
 			);
 			
 			
-			if (!bHit && HitResult.GetActor() == PlayerPawn)
+			if (!bHit && HitResult.GetActor() == PlayerPawnCharacter)
 			{
 				return true;
 			}

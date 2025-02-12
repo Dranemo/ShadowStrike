@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+#include "PlayerCharacter.h"
 #include "Components/SpotLightComponent.h"
 #include "Engine/TargetPoint.h"
 #include "EnemyCharacter.generated.h"
@@ -24,7 +25,7 @@ protected:
 
 	bool CheckPlayerDetection();
 
-	APawn* PlayerPawn;
+	APlayerCharacter* PlayerPawnCharacter;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

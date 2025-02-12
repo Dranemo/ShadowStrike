@@ -22,9 +22,11 @@ protected:
 
 	void MoveToNextLocation();
 	void SetNextLocation();
+	void CheckRotationFinished();
 
 	AEnemyCharacter* ControlledCharacter;
 	ATargetPoint* ActualTarget;
+	FTimerHandle RotationTimerHandle;
 
 private:
 	

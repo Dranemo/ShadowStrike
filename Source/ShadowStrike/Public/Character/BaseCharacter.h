@@ -6,7 +6,6 @@
 
 class ABaseWeapon;
 class UCapsuleComponent;
-
 UCLASS()
 class SHADOWSTRIKE_API ABaseCharacter : public ACharacter
 {
@@ -14,7 +13,6 @@ class SHADOWSTRIKE_API ABaseCharacter : public ACharacter
 
 public:
 	ABaseCharacter();
-
 	
 	virtual void Die();
 	

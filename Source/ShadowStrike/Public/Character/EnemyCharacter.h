@@ -22,6 +22,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	bool CheckPlayerDetection();
+
+	APawn* PlayerPawn;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USpotLightComponent* SpotLightComponent;

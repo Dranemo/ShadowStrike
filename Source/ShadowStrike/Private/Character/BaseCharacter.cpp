@@ -1,5 +1,6 @@
 #include "Character/BaseCharacter.h"
 #include "Actor/BaseWeapon.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -12,8 +13,6 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 }
 
 void ABaseCharacter::Die()

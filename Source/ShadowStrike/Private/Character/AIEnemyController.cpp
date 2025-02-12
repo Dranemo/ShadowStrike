@@ -6,11 +6,12 @@ void AAIEnemyController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
 	ControlledCharacter = Cast<AEnemyCharacter>(GetPawn());
-	ActualTarget = ControlledCharacter->ControlPoint[0];
-	
-	MoveToNextLocation();
+	if (ControlledCharacter && ControlledCharacter->ControlPoint.Num() > 0)
+	{
+		ActualTarget = ControlledCharacter->ControlPoint[0];
+		MoveToNextLocation();
+	}
 }
 
 
@@ -25,7 +26,7 @@ void AAIEnemyController::MoveToNextLocation()
 void AAIEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
 {
 	Super::OnMoveCompleted(RequestID, Result);
-
+	
 	SetNextLocation();
 	
 	MoveToNextLocation();

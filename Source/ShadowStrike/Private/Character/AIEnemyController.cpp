@@ -3,6 +3,7 @@
 #include "InteractiveToolManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Navigation/PathFollowingComponent.h"
 
 
 void AAIEnemyController::BeginPlay()
@@ -14,6 +15,22 @@ void AAIEnemyController::BeginPlay()
 	{
 		ActualTarget = ControlledCharacter->ControlPoint[0];
 		MoveToNextLocation();
+	}
+}
+
+void AAIEnemyController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (ControlledCharacter->GetPlayerDetected())
+	{
+		StopMovement();
+		MovementStopped = true;
+	}
+	else if (MovementStopped)
+	{
+		MoveToNextLocation();
+		MovementStopped = false;
 	}
 }
 
@@ -30,6 +47,11 @@ void AAIEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 
 {
 	Super::OnMoveCompleted(RequestID, Result);
+
+	if (Result.Flags == FPathFollowingResultFlags::MovementStop && Result.Flags == FPathFollowingResultFlags::NewRequest)
+	{
+		return;
+	}
 	
 	SetNextLocation();
 
@@ -58,10 +80,21 @@ void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator Targe
 {
 	if (!ControlledCharacter) return;
 
+	if (ControlledCharacter->GetPlayerDetected())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RotationTimerHandle);
+	}
 	
 	if(!TurnAnimStarted && ControlledCharacter->LeftTurnAnimMontage)
 	{
-		ControlledCharacter->PlayAnimMontage(ControlledCharacter->LeftTurnAnimMontage);
+		if (TargetRotation.Yaw > 0)
+		{
+			ControlledCharacter->PlayAnimMontage(ControlledCharacter->RightTurnAnimMontage);
+		}
+		else
+		{
+			ControlledCharacter->PlayAnimMontage(ControlledCharacter->LeftTurnAnimMontage);
+		}
 		
 		TurnAnimStarted = true;
 	}
@@ -83,7 +116,7 @@ void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator Targe
 		{
 			MoveToNextLocation(); 
 		}
-		else
+		else if (Direction == -(ActualTarget->GetActorLocation() - ControlledCharacter->GetActorLocation()).GetSafeNormal())
 		{
 			TargetRotation = FRotationMatrix::MakeFromX(-Direction).Rotator();
 			

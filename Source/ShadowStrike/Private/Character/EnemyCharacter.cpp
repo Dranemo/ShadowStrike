@@ -1,4 +1,6 @@
 #include "Character/EnemyCharacter.h"
+
+#include "Actor/AK.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -14,18 +16,36 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	PlayerPawnCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+
+	if(Weapons[0])
+	{
+		WeaponEquipped = GetWorld()->SpawnActor<AAK>(Weapons[0]);
+		AddWeapon(WeaponEquipped);
+	}
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (!PlayerPawnCharacter->IsHidden && CheckPlayerDetection())
+	if (!PlayerDetected && !PlayerPawnCharacter->IsHidden && CheckPlayerDetection())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "Player Detected");
+		PlayerDetected = true;
+		
+		SpotLightComponent->SetLightColor(FColor::Red);
+		
+		if (DownToAimAnimMontage)
+		{
+			PlayAnimMontage(DownToAimAnimMontage);
+		}
+		
+		GetWorldTimerManager().SetTimer(DetectionDelayTimerHandle,this, &AEnemyCharacter::WaitDetectionDelay, 1.0f, false);
+	}
+	else if (!PlayerDetected)
+	{
+		SpotLightComponent->SetLightColor(FColor::White);
 	}
 }
 
@@ -60,8 +80,7 @@ bool AEnemyCharacter::CheckPlayerDetection()
 				QueryParams
 			);
 			
-			
-			if (!bHit && HitResult.GetActor() == PlayerPawnCharacter)
+			if (bHit && HitResult.GetActor() == PlayerPawnCharacter)
 			{
 				return true;
 			}
@@ -70,6 +89,43 @@ bool AEnemyCharacter::CheckPlayerDetection()
 	return false;
 }
 
+void AEnemyCharacter::WaitDetectionDelay()
+{
+	GetWorldTimerManager().ClearTimer(DetectionDelayTimerHandle);
+	if (CheckPlayerDetection())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Player Detected2");
+		if (FiringAnimMontage)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (AnimInstance)
+			{
+				AnimInstance->Montage_Play(FiringAnimMontage);
+				
+				AnimInstance->Montage_SetNextSection(FName("LoopEnd"), FName("LoopStart"), FiringAnimMontage);
+				
+				GetWorldTimerManager().SetTimer(FiringCooldownHandle, this, &AEnemyCharacter::Fire, 1.0f, true);
+			}
+		}
+	}
+	else
+	{
+		PlayerDetected = false;;
+	}
+}
+
+void AEnemyCharacter::Fire()
+{
+
+	if (CheckPlayerDetection())
+	{
+		Super::Fire();
+	}
+	else
+	{
+		PlayerDetected = false;
+	}
+}
 
 
 

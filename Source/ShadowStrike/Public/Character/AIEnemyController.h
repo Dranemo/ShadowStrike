@@ -17,6 +17,7 @@ class SHADOWSTRIKE_API AAIEnemyController : public AAIController
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
@@ -29,6 +30,7 @@ protected:
 	FTimerHandle RotationTimerHandle;
 
 	bool TurnAnimStarted = false;
+	bool MovementStopped = false;
 	
 private:
 	

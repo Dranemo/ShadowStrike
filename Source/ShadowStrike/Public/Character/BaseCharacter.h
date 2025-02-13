@@ -15,6 +15,9 @@ public:
 	ABaseCharacter();
 	
 	virtual void Die();
+
+	UFUNCTION(BlueprintCallable)
+	ABaseWeapon* GetWeapon();
 	
 
 	
@@ -40,7 +43,25 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Weapons")
 	TArray<TSubclassOf<ABaseWeapon>> Weapons;
 
+
+	UPROPERTY(EditAnywhere, Category = "Weapons")
+	float KnifeCooldown = 5;
+
+	UPROPERTY(EditAnywhere, Category = "Weapons")
+	float RifleCooldown = 5;
+
+	UPROPERTY(EditAnywhere, Category="Animations")
+	UAnimMontage* KnifeAnim;
+
+	UPROPERTY(EditAnywhere, Category="Animations")
+	UAnimMontage* RifleAnim;
+
+
+	void ResetWeaponCooldown();
+
 private:
+	float WeaponCooldown = 0;
+	FTimerHandle HandleCooldownWeapon;
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

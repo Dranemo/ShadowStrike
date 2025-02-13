@@ -25,6 +25,8 @@ class SHADOWSTRIKE_API APlayerCharacter : public ABaseCharacter
 
 public:
 	APlayerCharacter();
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsHidden = false;
 
 	virtual void Die() override;

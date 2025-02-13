@@ -88,7 +88,6 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	if(IsHidden)
 		return;
 	
-	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Red, GetVelocity().ToString());
 	if(GetVelocity().Length() > 0)
 		return;
 
@@ -113,7 +112,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		return;
 
 	const FVector2d MovementVector = Value.Get<FVector2d>();
-	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, MovementVector.ToString());
 	
 	if (Controller)
 	{		
@@ -130,7 +128,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 void APlayerCharacter::Fire()
 {
 	
-	if (IsHidden)
+	
+	if (IsHidden )
+		return;
+
+	if(GetVelocity().Length() > 0)
 		return;
 	
 	Super::Fire();

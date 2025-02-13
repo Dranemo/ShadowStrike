@@ -13,6 +13,8 @@ AEnemyCharacter::AEnemyCharacter()
 }
 
 
+
+
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -127,5 +129,11 @@ void AEnemyCharacter::Fire()
 	}
 }
 
+
+void AEnemyCharacter::Die()
+{
+	DropWeapon();
+	Super::Die();
+}
 
 

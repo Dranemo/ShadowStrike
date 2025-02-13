@@ -17,6 +17,9 @@ public:
 	virtual void Die();
 
 	UFUNCTION(BlueprintCallable)
+	void GetIsDead() {return IsDead(); }
+
+	UFUNCTION(BlueprintCallable)
 	ABaseWeapon* GetWeapon();
 	
 
@@ -62,6 +65,8 @@ protected:
 private:
 	float WeaponCooldown = 0;
 	FTimerHandle HandleCooldownWeapon;
+
+	bool IsDead = false;
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

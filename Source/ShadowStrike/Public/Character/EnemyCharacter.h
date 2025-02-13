@@ -15,6 +15,8 @@ class SHADOWSTRIKE_API AEnemyCharacter : public ABaseCharacter
 public:
 	AEnemyCharacter();
 
+	virtual void Die() override;
+
 	virtual void Tick(float DeltaTime) override;
 
 	bool GetPlayerDetected() const { return PlayerDetected; }
@@ -40,6 +42,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Fire() override;
+	
 
 	bool CheckPlayerDetection();
 	void WaitDetectionDelay();

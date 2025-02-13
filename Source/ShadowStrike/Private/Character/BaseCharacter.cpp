@@ -18,6 +18,7 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::Die()
 {
+	IsDead = true;
 	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
 }
 

@@ -22,12 +22,14 @@ protected:
 
 	void MoveToNextLocation();
 	void SetNextLocation();
-	void CheckRotationFinished();
+	void CheckRotationFinished(FVector Direction, FRotator TargetRotation);
 
 	AEnemyCharacter* ControlledCharacter;
 	ATargetPoint* ActualTarget;
 	FTimerHandle RotationTimerHandle;
 
+	bool TurnAnimStarted = false;
+	
 private:
 	
 };

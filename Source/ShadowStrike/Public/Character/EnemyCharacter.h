@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "AI Properties")
 	TArray<ATargetPoint*> ControlPoint;
 
+	UPROPERTY(EditAnywhere, Category="Animation")
+	UAnimMontage* LeftTurnAnimMontage;
+
 protected:
 	virtual void BeginPlay() override;
 

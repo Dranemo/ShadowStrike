@@ -1,5 +1,6 @@
 #include "Character/AIEnemyController.h"
 
+#include "InteractiveToolManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -26,22 +27,19 @@ void AAIEnemyController::MoveToNextLocation()
 }
 
 void AAIEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+
 {
 	Super::OnMoveCompleted(RequestID, Result);
 	
 	SetNextLocation();
 
 	FVector Direction = (ActualTarget->GetActorLocation() - ControlledCharacter->GetActorLocation()).GetSafeNormal();
-	FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("Move to location: %s"), *TargetRotation.ToString()));
-	ControlledCharacter->SetActorRotation(FMath::RInterpTo(
-		GetPawn()->GetActorRotation(), 
-		FRotator(0, 0, TargetRotation.Yaw),                   
-		 UGameplayStatics::GetWorldDeltaSeconds(this),  
-		5.0f
-	));
-
-	GetWorldTimerManager().SetTimer(RotationTimerHandle, this, &AAIEnemyController::CheckRotationFinished, 0.1f, true);
+	FRotator TargetRotation = FRotationMatrix::MakeFromX(-Direction).Rotator();
+	
+	GetWorldTimerManager().SetTimer(RotationTimerHandle, FTimerDelegate::CreateLambda([this, Direction, TargetRotation]()
+	{
+		CheckRotationFinished(-Direction, TargetRotation);
+	}),0.01f, true);
 }
 
 void AAIEnemyController::SetNextLocation()
@@ -56,18 +54,43 @@ void AAIEnemyController::SetNextLocation()
 	}
 }
 
-void AAIEnemyController::CheckRotationFinished()
+void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator TargetRotation)
 {
 	if (!ControlledCharacter) return;
 
-	FVector ForwardVector = ControlledCharacter->GetActorForwardVector();
-	FVector Direction = (ActualTarget->GetActorLocation() - ControlledCharacter->GetActorLocation()).GetSafeNormal();
 	
-	float DotProduct = FVector::DotProduct(ForwardVector, Direction);
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("Move to location: %f"), DotProduct));
-	if (DotProduct > 0.99f) 
+	if(!TurnAnimStarted && ControlledCharacter->LeftTurnAnimMontage)
 	{
+		ControlledCharacter->PlayAnimMontage(ControlledCharacter->LeftTurnAnimMontage);
+		
+		TurnAnimStarted = true;
+	}
+	ControlledCharacter->SetActorRotation(FMath::RInterpTo(
+		ControlledCharacter->GetActorRotation(), 
+		 FRotator(0,TargetRotation.Yaw,0),                   
+		 UGameplayStatics::GetWorldDeltaSeconds(this), 
+		1.0f
+	));
+	
+	FVector ForwardVector = ControlledCharacter->GetActorForwardVector();
+	float DotProduct = FVector::DotProduct(ForwardVector, Direction);
+	
+	if (DotProduct > 0.99f ) 
+	{
+		TurnAnimStarted = false;
 		GetWorld()->GetTimerManager().ClearTimer(RotationTimerHandle);
-		MoveToNextLocation(); 
+		if(Direction == (ActualTarget->GetActorLocation() - ControlledCharacter->GetActorLocation()).GetSafeNormal())
+		{
+			MoveToNextLocation(); 
+		}
+		else
+		{
+			TargetRotation = FRotationMatrix::MakeFromX(-Direction).Rotator();
+			
+			GetWorldTimerManager().SetTimer(RotationTimerHandle, FTimerDelegate::CreateLambda([this, Direction, TargetRotation]()
+			{
+				CheckRotationFinished(-Direction, TargetRotation);
+			}),0.01f, true);
+		}
 	}
 }

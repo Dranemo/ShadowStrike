@@ -16,7 +16,7 @@ class SHADOWSTRIKE_API UMyGameInstance : public UGameInstance
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Timer")
-	float Timer;
+	int Timer;
 
 private:
 	virtual void Init() override;

@@ -29,15 +29,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Animation")
 	UAnimMontage* RightTurnAnimMontage;
-	
-	UPROPERTY(EditAnywhere, Category="Animation")
-	UAnimMontage* DownToAimAnimMontage;
-
-	UPROPERTY(EditAnywhere, Category="Animation")
-	UAnimMontage* AimToDownAnimMontage;
-
-	UPROPERTY(EditAnywhere, Category="Animation")
-	UAnimMontage* FiringAnimMontage;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,10 +37,16 @@ protected:
 
 	bool CheckPlayerDetection();
 	void WaitDetectionDelay();
+	void SetRifleFiringTransform(FVector TargetLocation, FRotator TargetRotation);
+	void LookAtPlayer();
 
 	APlayerCharacter* PlayerPawnCharacter;
 	FTimerHandle FiringCooldownHandle;
+	FTimerHandle RifleTransformTimerHandle;
+	FTimerHandle LookAtPlayerHandle;
 
+	UPROPERTY(EditAnywhere, Category = "Components")
+	USceneComponent* FiringWeaponLocation;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

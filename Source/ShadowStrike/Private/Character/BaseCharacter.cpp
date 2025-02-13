@@ -85,7 +85,6 @@ void ABaseCharacter::Fire()
 				PlayAnimMontage(RifleAnim);
 			}
 		}
-
 	}
 }
 

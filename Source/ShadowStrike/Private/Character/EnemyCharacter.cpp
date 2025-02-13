@@ -1,5 +1,6 @@
 #include "Character/EnemyCharacter.h"
 
+#include "VectorTypes.h"
 #include "Actor/AK.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -10,6 +11,9 @@ AEnemyCharacter::AEnemyCharacter()
 
 	SpotLightComponent = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
 	SpotLightComponent->SetupAttachment(RootComponent);
+
+	FiringWeaponLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Firing Weapon Location"));
+	FiringWeaponLocation->SetupAttachment(GetMesh());
 }
 
 
@@ -25,6 +29,7 @@ void AEnemyCharacter::BeginPlay()
 	{
 		WeaponEquipped = GetWorld()->SpawnActor<AAK>(Weapons[0]);
 		AddWeapon(WeaponEquipped);
+		RifleCooldown = 0.2;
 	}
 }
 
@@ -37,11 +42,6 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		PlayerDetected = true;
 		
 		SpotLightComponent->SetLightColor(FColor::Red);
-		
-		if (DownToAimAnimMontage)
-		{
-			PlayAnimMontage(DownToAimAnimMontage);
-		}
 		
 		GetWorldTimerManager().SetTimer(DetectionDelayTimerHandle,this, &AEnemyCharacter::WaitDetectionDelay, 1.0f, false);
 	}
@@ -97,37 +97,86 @@ void AEnemyCharacter::WaitDetectionDelay()
 	if (CheckPlayerDetection())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Player Detected2");
-		if (FiringAnimMontage)
+		
+		GetWorldTimerManager().SetTimer(RifleTransformTimerHandle, FTimerDelegate::CreateLambda([this]()
 		{
-			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-			if (AnimInstance)
-			{
-				AnimInstance->Montage_Play(FiringAnimMontage);
-				
-				AnimInstance->Montage_SetNextSection(FName("LoopEnd"), FName("LoopStart"), FiringAnimMontage);
-				
-				GetWorldTimerManager().SetTimer(FiringCooldownHandle, this, &AEnemyCharacter::Fire, 1.0f, true);
-			}
-		}
-	}
-	else
-	{
-		PlayerDetected = false;;
-	}
-}
-
-void AEnemyCharacter::Fire()
-{
-
-	if (CheckPlayerDetection())
-	{
-		Super::Fire();
+			SetRifleFiringTransform(FiringWeaponLocation->GetComponentLocation(), FiringWeaponLocation->GetComponentRotation());
+		}), 0.01f, true);
+		GetWorldTimerManager().SetTimer(FiringCooldownHandle, this, &AEnemyCharacter::Fire, RifleCooldown, true);
 	}
 	else
 	{
 		PlayerDetected = false;
 	}
 }
+
+void AEnemyCharacter::Fire()
+{
+	if (CheckPlayerDetection())
+	{
+		if (!LookAtPlayerHandle.IsValid())
+		{
+			GetWorldTimerManager().SetTimer(LookAtPlayerHandle, this, &AEnemyCharacter::LookAtPlayer, 0.01f, true);
+		}
+		
+		Super::Fire();
+	}
+	else
+	{
+		GetWorldTimerManager().SetTimer(RifleTransformTimerHandle, FTimerDelegate::CreateLambda([this]()
+		{
+			SetRifleFiringTransform(WeaponLocation->GetComponentLocation(), WeaponLocation->GetComponentRotation());
+		}), 0.01f, true);
+		
+		GetWorldTimerManager().ClearTimer(FiringCooldownHandle);
+		PlayerDetected = false;
+	}
+}
+
+
+void AEnemyCharacter::SetRifleFiringTransform(FVector TargetLocation, FRotator TargetRotation)
+{
+	
+	WeaponEquipped->SetActorLocation(FMath::VInterpTo(
+	WeaponEquipped->GetActorLocation(), 
+		 TargetLocation,                   
+		 UGameplayStatics::GetWorldDeltaSeconds(this), 
+		5.0f
+	));
+
+	WeaponEquipped->SetActorRotation(FMath::RInterpTo(
+	WeaponEquipped->GetActorRotation(), 
+		 TargetRotation,                   
+		 UGameplayStatics::GetWorldDeltaSeconds(this), 
+		5.0f
+	));
+
+	if (FVector::Dist(WeaponEquipped->GetActorLocation(), TargetLocation) < 1.0f &&
+	FMath::Abs(WeaponEquipped->GetActorRotation().Yaw - TargetRotation.Yaw) < 1.0f)
+	{
+		GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+	}
+}
+
+void AEnemyCharacter::LookAtPlayer()
+{
+	FVector Direction = (PlayerPawnCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+	FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	
+	SetActorRotation(FMath::RInterpTo(
+		GetActorRotation(),
+			TargetRotation,                   
+			UGameplayStatics::GetWorldDeltaSeconds(this), 
+		5.0f
+		));
+
+	if (FMath::Abs(GetActorRotation().Yaw - TargetRotation.Yaw) < 1.0f)
+	{
+		GetWorldTimerManager().ClearTimer(LookAtPlayerHandle);
+	}
+}
+
+
 
 
 void AEnemyCharacter::Die()

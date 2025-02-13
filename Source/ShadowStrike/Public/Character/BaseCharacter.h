@@ -17,7 +17,7 @@ public:
 	virtual void Die();
 
 	UFUNCTION(BlueprintCallable)
-	void GetIsDead() {return IsDead(); }
+	bool GetIsDead() {return IsDead; }
 
 	UFUNCTION(BlueprintCallable)
 	ABaseWeapon* GetWeapon();

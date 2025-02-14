@@ -5,6 +5,7 @@
 
 #include "MyGameInstance.h"
 #include "Components/BoxComponent.h"
+#include "Components/PointLightComponent.h"
 
 // Sets default values
 AItemToSteal::AItemToSteal()
@@ -18,6 +19,9 @@ AItemToSteal::AItemToSteal()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base mesh"));
 	Mesh->SetupAttachment(Box);
+
+	LightComponent = CreateDefaultSubobject<UPointLightComponent>(TEXT("Light"));
+	LightComponent->SetupAttachment(Box);
 
 }
 

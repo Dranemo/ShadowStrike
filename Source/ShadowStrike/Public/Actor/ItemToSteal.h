@@ -7,6 +7,7 @@
 #include "ItemToSteal.generated.h"
 
 
+class UPointLightComponent;
 class UBoxComponent;
 class UStaticMeshComponent;
 
@@ -34,4 +35,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* Box;
+
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    	UPointLightComponent* LightComponent;
 };

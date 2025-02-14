@@ -4,7 +4,7 @@
 #include "Actor/BaseWeapon.h"
 
 #include "Components/BoxComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Components/PointLightComponent.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -18,6 +18,10 @@ ABaseWeapon::ABaseWeapon()
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon  mesh"));
 	WeaponMesh->SetupAttachment(BoxComponent);
 
+	LightComponent = CreateDefaultSubobject<UPointLightComponent>(TEXT("Light"));
+	LightComponent->SetupAttachment(BoxComponent);
+	
+
 }
 
 void ABaseWeapon::Fire()
@@ -27,5 +31,21 @@ void ABaseWeapon::Fire()
 void ABaseWeapon::DestroyWeapon()
 {
 	Destroy();
+}
+
+void ABaseWeapon::SetLight(bool _bool)
+{
+	if(!_bool)
+		LightComponent->SetIntensity(0);
+
+	else
+		LightComponent->SetIntensity(LightIntensity);
+}
+
+void ABaseWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetLight(false);
 }
 

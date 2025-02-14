@@ -41,6 +41,7 @@ protected:
 	void LookAtPlayer();
 
 	APlayerCharacter* PlayerPawnCharacter;
+	
 	FTimerHandle FiringCooldownHandle;
 	FTimerHandle RifleTransformTimerHandle;
 	FTimerHandle LookAtPlayerHandle;

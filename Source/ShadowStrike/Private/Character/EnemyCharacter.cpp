@@ -36,6 +36,11 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetIsDead())
+	{
+		return;
+	}
 	
 	if (!PlayerDetected && !PlayerPawnCharacter->IsHidden && CheckPlayerDetection())
 	{
@@ -183,6 +188,10 @@ void AEnemyCharacter::LookAtPlayer()
 
 void AEnemyCharacter::Die()
 {
+	GetWorldTimerManager().ClearTimer(FiringCooldownHandle);
+	GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+	GetWorldTimerManager().ClearTimer(LookAtPlayerHandle);
+	
 	DropWeapon();
 	Super::Die();
 }

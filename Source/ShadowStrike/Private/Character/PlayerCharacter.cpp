@@ -12,6 +12,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Windows/WindowsApplication.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -170,6 +172,26 @@ void APlayerCharacter::Hide()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hiding"));
 
 			UGameplayStatics::PlaySoundAtLocation(this, HideSound, GetActorLocation());
+
+			if (HideEffect)
+			{
+				UParticleSystemComponent* HideEffectComponent = UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(),
+					HideEffect,
+					GetActorLocation(),
+					GetActorRotation(),
+					FVector(2.0f), 
+					true 
+					);
+
+				if (HideEffectComponent)
+				{
+					GetWorld()->GetTimerManager().SetTimer(HideEffectHandle,   FTimerDelegate::CreateLambda([this, HideEffectComponent]()
+					{
+						StopHideEffect(HideEffectComponent);
+					}), 1.0f, false);
+				}
+			}
 			
 			return;
 		}
@@ -178,6 +200,12 @@ void APlayerCharacter::Hide()
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Can't Hide");
 }
+
+void APlayerCharacter::StopHideEffect(UParticleSystemComponent* HideEffectComponent)
+{
+	HideEffectComponent->SetActive(false, true);
+}
+
 
 void APlayerCharacter::Pickup()
 {

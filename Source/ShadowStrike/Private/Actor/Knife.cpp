@@ -23,10 +23,13 @@ void AKnife::Fire()
 	{
 		if(OverlappingActor != Owner)
 		{
+			
 			if(ABaseCharacter* pawnActor = Cast<ABaseCharacter>(OverlappingActor))
 			{
 				pawnActor->Die();
 			}
+
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue,  OverlappingActor->GetName());
 		}
 	}
 }

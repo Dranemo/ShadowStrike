@@ -4,6 +4,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MyGameInstance.h"
+#include "Actor/ItemToSteal.h"
 #include "Actor/Knife.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -25,6 +27,8 @@ APlayerCharacter::APlayerCharacter()
 	CapsuleCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SphereCollision"));
 	CapsuleCollision->SetupAttachment(GetCapsuleComponent());
 }
+
+
 
 void APlayerCharacter::BeginPlay()
 {
@@ -198,6 +202,10 @@ void APlayerCharacter::Pickup()
 				return;
 			}
 		}
+		else if (AItemToSteal* itemToSteal = Cast<AItemToSteal>(OverlappingActor))
+		{
+			itemToSteal->StealItem();
+		}
 	}
 
 	
@@ -208,4 +216,18 @@ void APlayerCharacter::Pickup()
 void APlayerCharacter::Die()
 {
 	Super::Die();
+
+	PlayAnimMontage(DeathAnimMontage);
+
+	GetWorldTimerManager().SetTimer(DeathHandle, this, &APlayerCharacter::RespawnDeath, DeathAnimMontage->GetPlayLength(), false);
+
+
+}
+
+void APlayerCharacter::RespawnDeath()
+{
+	if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
+	{
+		GI->PlayScene("EndGame");
+	}
 }

@@ -21,7 +21,10 @@ void AAIEnemyController::BeginPlay()
 void AAIEnemyController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	if (ControlledCharacter->GetIsDead())
+		return;
 
+	
 	if (ControlledCharacter->GetPlayerDetected())
 	{
 		StopMovement();
@@ -39,6 +42,13 @@ void AAIEnemyController::MoveToNextLocation()
 {
 	if (ControlledCharacter)
 	{
+		
+		if (ControlledCharacter->GetIsDead())
+		{
+			StopMovement();
+			return;
+		}
+		
 		MoveToLocation(ActualTarget->GetActorLocation());
 	}
 }
@@ -47,6 +57,10 @@ void AAIEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 
 {
 	Super::OnMoveCompleted(RequestID, Result);
+
+	
+	if (ControlledCharacter->GetIsDead())
+		return;
 
 	if (Result.Flags == FPathFollowingResultFlags::MovementStop && Result.Flags == FPathFollowingResultFlags::NewRequest)
 	{
@@ -79,6 +93,9 @@ void AAIEnemyController::SetNextLocation()
 void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator TargetRotation)
 {
 	if (!ControlledCharacter) return;
+	
+	if (ControlledCharacter->GetIsDead())
+		return;
 
 	if (ControlledCharacter->GetPlayerDetected())
 	{

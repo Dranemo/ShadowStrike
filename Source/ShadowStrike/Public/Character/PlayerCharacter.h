@@ -46,6 +46,12 @@ private:
 
 	APlayerController* PlayerController;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Anim", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DeathAnimMontage;
+
+	FTimerHandle DeathHandle;
+	void RespawnDeath();
+
 
 protected:
 	virtual void BeginPlay() override;

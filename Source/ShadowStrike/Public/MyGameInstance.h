@@ -18,7 +18,7 @@ public:
 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Timer")
-	int Timer;
+	int Timer = 0;
 
 
 
@@ -29,7 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayScene(FString name);
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Timer")
+	int NbrItemToSteal = 0;
+	void StealItem();
 	
 
 private:
@@ -37,5 +39,6 @@ private:
 	FTimerHandle timerHandle;
 
 	void UpdateTimer();
+
 	
 };

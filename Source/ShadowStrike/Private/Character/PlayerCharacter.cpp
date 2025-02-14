@@ -205,6 +205,7 @@ void APlayerCharacter::Pickup()
 		else if (AItemToSteal* itemToSteal = Cast<AItemToSteal>(OverlappingActor))
 		{
 			itemToSteal->StealItem();
+			return;
 		}
 	}
 
@@ -215,6 +216,7 @@ void APlayerCharacter::Pickup()
 
 void APlayerCharacter::Die()
 {
+	
 	Super::Die();
 
 	PlayAnimMontage(DeathAnimMontage);

@@ -21,6 +21,10 @@ public:
 
 	bool GetPlayerDetected() const { return PlayerDetected; }
 
+	void DisbaleAllTimer();
+
+	APlayerCharacter* PlayerPawnCharacter;
+
 	UPROPERTY(EditAnywhere, Category = "AI Properties")
 	TArray<ATargetPoint*> ControlPoint;
 
@@ -39,8 +43,7 @@ protected:
 	void WaitDetectionDelay();
 	void SetRifleFiringTransform(FVector TargetLocation, FRotator TargetRotation);
 	void LookAtPlayer();
-
-	APlayerCharacter* PlayerPawnCharacter;
+	
 	
 	FTimerHandle FiringCooldownHandle;
 	FTimerHandle RifleTransformTimerHandle;

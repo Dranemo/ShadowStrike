@@ -4,6 +4,7 @@
 #include "MyGameInstance.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Character/EnemyCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -59,6 +60,15 @@ void UMyGameInstance::StealItem()
 	NbrItemToSteal--;
 	if (NbrItemToSteal == 0)
 	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), FoundActors);
+
+		for (auto FoundActor : FoundActors)
+		{
+			Cast<AEnemyCharacter>(FoundActor)->DisbaleAllTimer();
+		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "StealItem");
 		PlayScene("EndGame");
 	}
 }

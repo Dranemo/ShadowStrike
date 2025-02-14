@@ -42,13 +42,11 @@ void AAIEnemyController::MoveToNextLocation()
 {
 	if (ControlledCharacter)
 	{
-		
 		if (ControlledCharacter->GetIsDead())
 		{
 			StopMovement();
 			return;
 		}
-		
 		MoveToLocation(ActualTarget->GetActorLocation());
 	}
 }
@@ -57,12 +55,10 @@ void AAIEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 
 {
 	Super::OnMoveCompleted(RequestID, Result);
-
-	
-	if (ControlledCharacter->GetIsDead())
+	if (ControlledCharacter->GetIsDead() || ControlledCharacter->PlayerPawnCharacter->GetIsDead())
 		return;
-
-	if (Result.Flags == FPathFollowingResultFlags::MovementStop && Result.Flags == FPathFollowingResultFlags::NewRequest)
+	
+	if (Result.Flags == FPathFollowingResultFlags::MovementStop || Result.Flags == FPathFollowingResultFlags::NewRequest)
 	{
 		return;
 	}
@@ -94,8 +90,11 @@ void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator Targe
 {
 	if (!ControlledCharacter) return;
 	
-	if (ControlledCharacter->GetIsDead())
+	if (ControlledCharacter->GetIsDead() || ControlledCharacter->PlayerPawnCharacter->GetIsDead())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RotationTimerHandle);
 		return;
+	}
 
 	if (ControlledCharacter->GetPlayerDetected())
 	{
@@ -143,4 +142,9 @@ void AAIEnemyController::CheckRotationFinished(FVector Direction, FRotator Targe
 			}),0.01f, true);
 		}
 	}
+}
+
+void AAIEnemyController::DisableAllTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(RotationTimerHandle);
 }

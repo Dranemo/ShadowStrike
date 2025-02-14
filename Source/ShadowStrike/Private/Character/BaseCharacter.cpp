@@ -2,6 +2,7 @@
 #include "Actor/BaseWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Actor/Knife.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -21,6 +22,7 @@ void ABaseCharacter::Die()
 	IsDead = true;
 	GetMesh()->SetEnableGravity(false);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
 }
@@ -56,9 +58,10 @@ void ABaseCharacter::DropWeapon()
 
 	FDetachmentTransformRules WeaponTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false);
 	WeaponEquipped->DetachFromActor(WeaponTransformRules);
-
-	FVector newLocation(WeaponEquipped->GetActorLocation().X, 0.1f, WeaponEquipped->GetActorLocation().Z);
+	
+	FVector newLocation(WeaponEquipped->GetActorLocation().X, WeaponEquipped->GetActorLocation().Y , 10.f);
 	WeaponEquipped->SetActorLocation(newLocation);
+	WeaponEquipped->SetActorRotation(FRotator(0, 0, 0));
 
 	WeaponEquipped = nullptr;
 }

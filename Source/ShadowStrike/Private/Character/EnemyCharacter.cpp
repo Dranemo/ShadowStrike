@@ -2,6 +2,7 @@
 
 #include "VectorTypes.h"
 #include "Actor/AK.h"
+#include "Character/AIEnemyController.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -143,6 +144,11 @@ void AEnemyCharacter::Fire()
 
 void AEnemyCharacter::SetRifleFiringTransform(FVector TargetLocation, FRotator TargetRotation)
 {
+	if (GetIsDead())
+	{
+		GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+	}
+
 	
 	WeaponEquipped->SetActorLocation(FMath::VInterpTo(
 	WeaponEquipped->GetActorLocation(), 
@@ -188,12 +194,29 @@ void AEnemyCharacter::LookAtPlayer()
 
 void AEnemyCharacter::Die()
 {
-	GetWorldTimerManager().ClearTimer(FiringCooldownHandle);
-	GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
-	GetWorldTimerManager().ClearTimer(LookAtPlayerHandle);
+	DisbaleAllTimer();
+
+	SpotLightComponent->SetIntensity(0);
 	
 	DropWeapon();
 	Super::Die();
 }
+
+void AEnemyCharacter::DisbaleAllTimer()
+{
+	GetWorldTimerManager().ClearTimer(FiringCooldownHandle);
+	GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+	GetWorldTimerManager().ClearTimer(LookAtPlayerHandle);
+
+	AAIEnemyController* AIController = Cast<AAIEnemyController>(GetController());
+
+	if (AIController)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "AI Controller!");
+		AIController->DisableAllTimer();
+	}
+
+}
+
 
 

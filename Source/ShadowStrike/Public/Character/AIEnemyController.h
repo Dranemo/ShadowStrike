@@ -13,7 +13,9 @@ UCLASS()
 class SHADOWSTRIKE_API AAIEnemyController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	void DisableAllTimer();
 
 protected:
 	virtual void BeginPlay() override;
@@ -24,6 +26,7 @@ protected:
 	void MoveToNextLocation();
 	void SetNextLocation();
 	void CheckRotationFinished(FVector Direction, FRotator TargetRotation);
+	
 
 	AEnemyCharacter* ControlledCharacter;
 	ATargetPoint* ActualTarget;

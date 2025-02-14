@@ -43,6 +43,8 @@ void ABaseCharacter::AddWeapon(ABaseWeapon* Weapon)
 	Weapon->SetActorTransform(transformWeapon);
 
 	ResetWeaponCooldown();
+
+	UGameplayStatics::PlaySoundAtLocation(this, Weapon->PickedSound, GetActorLocation());
 }
 
 void ABaseCharacter::DropWeapon()

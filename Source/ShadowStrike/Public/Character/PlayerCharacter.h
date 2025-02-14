@@ -68,4 +68,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Controller")
 	UInputAction* PickUpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* HideSound;
 };

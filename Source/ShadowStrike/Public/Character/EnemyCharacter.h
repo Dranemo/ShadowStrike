@@ -54,4 +54,7 @@ private:
 
 	FTimerHandle DetectionDelayTimerHandle;
 	bool PlayerDetected = false;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* GuardDetectedPlayerSound;
 };

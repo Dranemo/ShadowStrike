@@ -164,6 +164,8 @@ void APlayerCharacter::Hide()
 		{
 			IsHidden = true;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hiding"));
+
+			UGameplayStatics::PlaySoundAtLocation(this, HideSound, GetActorLocation());
 			
 			return;
 		}

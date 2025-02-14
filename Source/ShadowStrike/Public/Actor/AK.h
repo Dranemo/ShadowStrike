@@ -31,5 +31,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* BulletSpawnLocation;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* ShootSound;
 };

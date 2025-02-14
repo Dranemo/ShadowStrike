@@ -4,12 +4,15 @@
 #include "Actor/AK.h"
 
 #include "Actor/Bullet.h"
+#include "Kismet/GameplayStatics.h"
 
 AAK::AAK()
 {
 	BulletSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("BulletSpawnPoint"));
 	BulletSpawnLocation->SetupAttachment(WeaponMesh);
+	
 }
+
 
 void AAK::Fire()
 {
@@ -21,5 +24,7 @@ void AAK::Fire()
 		
 		ABullet* InstanciatedBullet = GetWorld()->SpawnActor<ABullet>(Bullet, TransformBullet);
 		InstanciatedBullet->SetOwner(this);
+
+		UGameplayStatics::PlaySoundAtLocation(this, ShootSound, TransformBullet.GetLocation());
 	}
 }

@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 
 
+
+
 void UMyGameInstance::Init()
 {
 	Super::Init();
@@ -51,4 +53,13 @@ void UMyGameInstance::PlayScene(FString sceneName)
 	}
 }
 
+
+void UMyGameInstance::StealItem()
+{
+	NbrItemToSteal--;
+	if (NbrItemToSteal == 0)
+	{
+		PlayScene("EndGame");
+	}
+}
 

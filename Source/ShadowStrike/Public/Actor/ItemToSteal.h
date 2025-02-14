@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "ItemToSteal.generated.h"
 
+
+class UBoxComponent;
+class UStaticMeshComponent;
+
 UCLASS()
 class SHADOWSTRIKE_API AItemToSteal : public AActor
 {
@@ -15,12 +19,19 @@ public:
 	// Sets default values for this actor's properties
 	AItemToSteal();
 
+	void StealItem();
+
+
+
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	
+	void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Mesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* Box;
 };

@@ -42,6 +42,8 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		PlayerDetected = true;
 		
 		SpotLightComponent->SetLightColor(FColor::Red);
+
+		UGameplayStatics::PlaySoundAtLocation(this, GuardDetectedPlayerSound, GetActorLocation());
 		
 		GetWorldTimerManager().SetTimer(DetectionDelayTimerHandle,this, &AEnemyCharacter::WaitDetectionDelay, 1.0f, false);
 	}

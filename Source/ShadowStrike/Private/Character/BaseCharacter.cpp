@@ -1,5 +1,7 @@
 #include "Character/BaseCharacter.h"
 #include "Actor/BaseWeapon.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Actor/Knife.h"
 #include "Kismet/GameplayStatics.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -8,17 +10,24 @@ ABaseCharacter::ABaseCharacter()
 	WeaponLocation = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Projectile Location"));
 	WeaponLocation->SetupAttachment(GetMesh());
 }
-	
+
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 }
 
 void ABaseCharacter::Die()
 {
+	IsDead = true;
+	GetMesh()->SetEnableGravity(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
+}
+
+ABaseWeapon* ABaseCharacter::GetWeapon()
+{
+	return WeaponEquipped;
 }
 
 void ABaseCharacter::AddWeapon(ABaseWeapon* Weapon)
@@ -35,6 +44,10 @@ void ABaseCharacter::AddWeapon(ABaseWeapon* Weapon)
 
 	FTransform transformWeapon(WeaponLocation->GetComponentRotation(), WeaponLocation->GetComponentLocation(), Weapon->GetActorScale());
 	Weapon->SetActorTransform(transformWeapon);
+
+	ResetWeaponCooldown();
+
+	UGameplayStatics::PlaySoundAtLocation(this, Weapon->PickedSound, GetActorLocation());
 }
 
 void ABaseCharacter::DropWeapon()
@@ -44,15 +57,42 @@ void ABaseCharacter::DropWeapon()
 	FDetachmentTransformRules WeaponTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false);
 	WeaponEquipped->DetachFromActor(WeaponTransformRules);
 
+	FVector newLocation(WeaponEquipped->GetActorLocation().X, 0.1f, WeaponEquipped->GetActorLocation().Z);
+	WeaponEquipped->SetActorLocation(newLocation);
+
 	WeaponEquipped = nullptr;
 }
 
 
 void ABaseCharacter::Fire()
 {
-	if(WeaponEquipped)
+	if(WeaponEquipped && WeaponCooldown == 0)
 	{
 		WeaponEquipped->Fire();
+		WeaponCooldown = 1;
+
+		if(AKnife* knife = Cast<AKnife>(WeaponEquipped))
+		{
+			if(!HandleCooldownWeapon.IsValid())
+				GetWorld()->GetTimerManager().SetTimer(HandleCooldownWeapon, this, &ABaseCharacter::ResetWeaponCooldown, KnifeCooldown);
+			
+			if(KnifeAnim)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, .1, FColor::Red, ("KnifeAnim"));
+				PlayAnimMontage(KnifeAnim); 
+			}
+		}
+		else
+		{
+			if(!HandleCooldownWeapon.IsValid())
+				GetWorld()->GetTimerManager().SetTimer(HandleCooldownWeapon, this, &ABaseCharacter::ResetWeaponCooldown, RifleCooldown);
+			
+			if(RifleAnim)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, .1, FColor::Red, ("RifleAnim"));
+				PlayAnimMontage(RifleAnim);
+			}
+		}
 	}
 }
 
@@ -69,4 +109,11 @@ void ABaseCharacter::Rotate(FVector LookAtTarget)
 				LookAtRotation,
 				UGameplayStatics::GetWorldDeltaSeconds(this),
 				InterpSpeed));
+}
+
+void ABaseCharacter::ResetWeaponCooldown()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Blue, TEXT("ResetCooldown"));
+	WeaponCooldown = 0;
+	GetWorldTimerManager().ClearTimer(HandleCooldownWeapon);
 }

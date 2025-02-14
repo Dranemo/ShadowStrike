@@ -19,13 +19,14 @@ public:
 
 	virtual void Fire();
 	void DestroyWeapon();
-
+	
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* PickedSound;
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh;
-
-
 };

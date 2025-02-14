@@ -25,6 +25,8 @@ class SHADOWSTRIKE_API APlayerCharacter : public ABaseCharacter
 
 public:
 	APlayerCharacter();
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsHidden = false;
 
 	virtual void Die() override;
@@ -43,6 +45,12 @@ private:
 	UCapsuleComponent* CapsuleCollision;
 
 	APlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Anim", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DeathAnimMontage;
+
+	FTimerHandle DeathHandle;
+	void RespawnDeath();
 
 
 protected:
@@ -66,4 +74,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Controller")
 	UInputAction* PickUpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* HideSound;
 };

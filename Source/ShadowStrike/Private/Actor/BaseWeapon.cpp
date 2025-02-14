@@ -4,6 +4,7 @@
 #include "Actor/BaseWeapon.h"
 
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()

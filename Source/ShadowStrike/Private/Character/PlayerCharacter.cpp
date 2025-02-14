@@ -4,6 +4,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MyGameInstance.h"
+#include "Actor/ItemToSteal.h"
 #include "Actor/Knife.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -25,6 +27,8 @@ APlayerCharacter::APlayerCharacter()
 	CapsuleCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SphereCollision"));
 	CapsuleCollision->SetupAttachment(GetCapsuleComponent());
 }
+
+
 
 void APlayerCharacter::BeginPlay()
 {
@@ -88,6 +92,10 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	if(IsHidden)
 		return;
 	
+	if(GetVelocity().Length() > 0)
+		return;
+
+	
 	if (PlayerController)
 	{
 		FHitResult HitResult;
@@ -95,9 +103,7 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 			ECC_Visibility,
 			false,
 			HitResult);
-
-
-		//GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("RotateTurret"));
+		
 		Rotate(HitResult.Location);
 	}
 }
@@ -110,21 +116,27 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		return;
 
 	const FVector2d MovementVector = Value.Get<FVector2d>();
-	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, FString::Printf(TEXT("%s"), *MovementVector.ToString()));
 	
 	if (Controller)
-	{
+	{		
 		FVector DeltaLocation = FVector::ZeroVector;
 		DeltaLocation.X = MovementVector.Y * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
 		DeltaLocation.Y = MovementVector.X * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
-		AddActorLocalOffset(DeltaLocation, true);
+		
+		AddMovementInput(DeltaLocation);
+
+		Rotate(this->GetActorLocation() + DeltaLocation);
 	}
 }
 
 void APlayerCharacter::Fire()
 {
 	
-	if (IsHidden)
+	
+	if (IsHidden )
+		return;
+
+	if(GetVelocity().Length() > 0)
 		return;
 	
 	Super::Fire();
@@ -156,6 +168,8 @@ void APlayerCharacter::Hide()
 		{
 			IsHidden = true;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hiding"));
+
+			UGameplayStatics::PlaySoundAtLocation(this, HideSound, GetActorLocation());
 			
 			return;
 		}
@@ -188,6 +202,10 @@ void APlayerCharacter::Pickup()
 				return;
 			}
 		}
+		else if (AItemToSteal* itemToSteal = Cast<AItemToSteal>(OverlappingActor))
+		{
+			itemToSteal->StealItem();
+		}
 	}
 
 	
@@ -198,4 +216,18 @@ void APlayerCharacter::Pickup()
 void APlayerCharacter::Die()
 {
 	Super::Die();
+
+	PlayAnimMontage(DeathAnimMontage);
+
+	GetWorldTimerManager().SetTimer(DeathHandle, this, &APlayerCharacter::RespawnDeath, DeathAnimMontage->GetPlayLength(), false);
+
+
+}
+
+void APlayerCharacter::RespawnDeath()
+{
+	if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
+	{
+		GI->PlayScene("EndGame");
+	}
 }

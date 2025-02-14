@@ -120,6 +120,10 @@ void AEnemyCharacter::WaitDetectionDelay()
 
 void AEnemyCharacter::Fire()
 {
+	if(GetIsDead())
+		return;
+
+	
 	if (CheckPlayerDetection())
 	{
 		if (!LookAtPlayerHandle.IsValid())

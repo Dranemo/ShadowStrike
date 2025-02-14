@@ -2,6 +2,8 @@
 #include "Actor/BaseWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Actor/Knife.h"
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -21,6 +23,9 @@ void ABaseCharacter::Die()
 	IsDead = true;
 	GetMesh()->SetEnableGravity(false);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, this->GetActorLocation());
 	
 	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
 }
@@ -38,6 +43,8 @@ void ABaseCharacter::AddWeapon(ABaseWeapon* Weapon)
 	WeaponEquipped = Weapon;
 	Weapon->SetOwner(this);
 
+	WeaponEquipped->SetLight(false);
+
 	FAttachmentTransformRules WeaponTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative, false);
 	Weapon->AttachToComponent(GetMesh(), WeaponTransformRules);
 
@@ -54,11 +61,14 @@ void ABaseCharacter::DropWeapon()
 {
 	WeaponEquipped->SetOwner(nullptr);
 
+	WeaponEquipped->SetLight(true);
+
 	FDetachmentTransformRules WeaponTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false);
 	WeaponEquipped->DetachFromActor(WeaponTransformRules);
-
-	FVector newLocation(WeaponEquipped->GetActorLocation().X, 0.1f, WeaponEquipped->GetActorLocation().Z);
+	
+	FVector newLocation(WeaponEquipped->GetActorLocation().X, WeaponEquipped->GetActorLocation().Y , 10.f);
 	WeaponEquipped->SetActorLocation(newLocation);
+	WeaponEquipped->SetActorRotation(FRotator(0, 0, 0));
 
 	WeaponEquipped = nullptr;
 }

@@ -58,6 +58,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Animations")
 	UAnimMontage* RifleAnim;
+	
+	UPROPERTY(EditAnywhere, Category="Sounds")
+	USoundBase* DeathSound;
 
 
 	void ResetWeaponCooldown();

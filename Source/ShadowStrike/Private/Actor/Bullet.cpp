@@ -3,6 +3,7 @@
 
 #include "Actor/Bullet.h"
 #include "Character/BaseCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABullet::ABullet()
@@ -20,8 +21,24 @@ void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UNiagaraComponent* NiagaraComp =UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),           
+		NiagaraEffect,          
+		GetActorLocation(),     
+		GetActorLocation().ForwardVector.Rotation()  
+	);
+
+	GetWorldTimerManager().SetTimer(NiagaraHandle,  FTimerDelegate::CreateLambda([this, NiagaraComp]()
+	{
+		DestroyNiagara(NiagaraComp);
+	}), 0.1, false);
+	
 	GetWorld()->GetTimerManager().SetTimer(BulletTimerHandle, this, &ABullet::DestroyBullet, LifeTime, false);
 	BaseMesh->AddImpulse(ImpulseForce * BaseMesh->GetUpVector());
+}
+void ABullet::DestroyNiagara(UNiagaraComponent* NiagaraComp)
+{
+	NiagaraComp->Deactivate();
 }
 
 void ABullet::DestroyBullet()
@@ -39,10 +56,12 @@ void ABullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveCo
 
 	ABaseCharacter* otherPawn = Cast<ABaseCharacter>(Other);
 	
-	if(Other != GetOwner() && otherPawn)
+	if(Other != GetOwner()->GetOwner() && otherPawn)
 	{
 		otherPawn->Die();
 		DestroyBullet();
 	}
 }
+
+
 

@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Bullet.generated.h"
 
 UCLASS()
@@ -21,13 +21,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* BaseMesh;
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BulletProperties", meta = (AllowPrivateAccess = "true"))
 	float LifeTime = 5.f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BulletProperties", meta = (AllowPrivateAccess = "true"))
 	FVector ImpulseForce = FVector(20000, 20000, 20000);
-
+	
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	UNiagaraSystem* NiagaraEffect;
+	FTimerHandle NiagaraHandle;
+	void DestroyNiagara(UNiagaraComponent* NiagaraComp);
+	
 	FTimerHandle BulletTimerHandle;
 	void DestroyBullet();
 

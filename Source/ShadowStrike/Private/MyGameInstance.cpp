@@ -43,13 +43,17 @@ void UMyGameInstance::PlayScene(FString sceneName)
 
 
 
-		if (sceneName == "Level_01")
+		if (sceneName == "LevelFinal")
 		{
 			Timer=0;
 			if(!timerHandle.IsValid())
 			{
 				TimerManager->SetTimer(timerHandle, this, &UMyGameInstance::UpdateTimer, 1.f, true);
 			}
+		}
+		else
+		{
+			TimerManager->ClearTimer(timerHandle);
 		}
 	}
 }

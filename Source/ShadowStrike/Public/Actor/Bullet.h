@@ -30,6 +30,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "VFX")
 	UNiagaraSystem* NiagaraEffect;
 	FTimerHandle NiagaraHandle;
+	void DestroyNiagara(UNiagaraComponent* NiagaraComp);
 	
 	FTimerHandle BulletTimerHandle;
 	void DestroyBullet();

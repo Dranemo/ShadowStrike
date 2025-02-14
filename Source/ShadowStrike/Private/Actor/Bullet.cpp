@@ -28,10 +28,17 @@ void ABullet::BeginPlay()
 		GetActorLocation().ForwardVector.Rotation()  
 	);
 
-	//GetWorldTimerManager().SetTimer(NiagaraHandle, this, )
+	GetWorldTimerManager().SetTimer(NiagaraHandle,  FTimerDelegate::CreateLambda([this, NiagaraComp]()
+	{
+		DestroyNiagara(NiagaraComp);
+	}), 0.1, false);
 	
 	GetWorld()->GetTimerManager().SetTimer(BulletTimerHandle, this, &ABullet::DestroyBullet, LifeTime, false);
 	BaseMesh->AddImpulse(ImpulseForce * BaseMesh->GetUpVector());
+}
+void ABullet::DestroyNiagara(UNiagaraComponent* NiagaraComp)
+{
+	NiagaraComp->Deactivate();
 }
 
 void ABullet::DestroyBullet()
@@ -55,4 +62,6 @@ void ABullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveCo
 		DestroyBullet();
 	}
 }
+
+
 

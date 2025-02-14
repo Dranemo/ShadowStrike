@@ -22,6 +22,12 @@ void UMyGameInstance::UpdateTimer()
 	Timer+=1;
 }
 
+void UMyGameInstance::PlayMusic(USoundBase* music)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), music, 1.f, 1.f, 0.f);
+
+}
+
 void UMyGameInstance::ResetScene()
 {
 	UWorld* World = GetWorld();
@@ -44,19 +50,16 @@ void UMyGameInstance::PlayScene(FString sceneName)
 
 		UGameplayStatics::OpenLevel(World, *sceneName);
 
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, sceneName + CurrentLevel.ToString());
-
 		if (sceneName == "LevelFinal")
 		{
 			if(CurrentLevel.ToString() != sceneName)
 			{
-				UGameplayStatics::PlaySound2D(World, GameMusic, 1.f, 1.f, 0.f);
-
-				if(!GameMusic)
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Purple, TEXT("PlayMusic"));
+				FTimerDelegate TimerDel = FTimerDelegate::CreateUObject( this, &UMyGameInstance::PlayMusic, GameMusic );
+				GetWorld()->GetTimerManager().SetTimerForNextTick(TimerDel);
 			}
 			
 			Timer=0;
+			NbrItemToSteal=0;
 			if(!timerHandle.IsValid())
 			{
 				TimerManager->SetTimer(timerHandle, this, &UMyGameInstance::UpdateTimer, 1.f, true);
@@ -66,8 +69,8 @@ void UMyGameInstance::PlayScene(FString sceneName)
 		{
 			if(CurrentLevel.ToString() != "LevelFinal")
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Purple, TEXT("PlayMusic"));	
-				UGameplayStatics::PlaySound2D(World, MainMenuMusic, 1.f, 1.f, 0.f);
+				FTimerDelegate TimerDel = FTimerDelegate::CreateUObject( this, &UMyGameInstance::PlayMusic, MainMenuMusic );
+				GetWorld()->GetTimerManager().SetTimerForNextTick(TimerDel);
 			}
 
 			

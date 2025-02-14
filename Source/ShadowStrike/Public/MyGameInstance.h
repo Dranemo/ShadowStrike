@@ -40,7 +40,7 @@ private:
 
 	void UpdateTimer();
 
-	
+	void PlayMusic(USoundBase* music);
 
 
 

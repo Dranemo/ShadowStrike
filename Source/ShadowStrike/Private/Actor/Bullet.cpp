@@ -56,7 +56,7 @@ void ABullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveCo
 
 	ABaseCharacter* otherPawn = Cast<ABaseCharacter>(Other);
 	
-	if(Other != GetOwner() && otherPawn)
+	if(Other != GetOwner()->GetOwner() && otherPawn)
 	{
 		otherPawn->Die();
 		DestroyBullet();

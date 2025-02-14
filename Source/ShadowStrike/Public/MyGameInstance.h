@@ -41,4 +41,13 @@ private:
 	void UpdateTimer();
 
 	
+
+
+
+	UPROPERTY(EditAnywhere, Category = "Musics", meta = (AllowPrivateAccess = "true"))
+	USoundBase* MainMenuMusic;
+
+	UPROPERTY(EditAnywhere, Category = "Musics", meta = (AllowPrivateAccess = "true"))
+	USoundBase* GameMusic;
+	
 };

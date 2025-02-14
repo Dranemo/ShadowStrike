@@ -39,12 +39,23 @@ void UMyGameInstance::PlayScene(FString sceneName)
 	UWorld* World = GetWorld();
 	if (World)
 	{
+
+		FName CurrentLevel = *World->GetMapName();
+
 		UGameplayStatics::OpenLevel(World, *sceneName);
 
-
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, sceneName + CurrentLevel.ToString());
 
 		if (sceneName == "LevelFinal")
 		{
+			if(CurrentLevel.ToString() != sceneName)
+			{
+				UGameplayStatics::PlaySound2D(World, GameMusic, 1.f, 1.f, 0.f);
+
+				if(!GameMusic)
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Purple, TEXT("PlayMusic"));
+			}
+			
 			Timer=0;
 			if(!timerHandle.IsValid())
 			{
@@ -53,6 +64,13 @@ void UMyGameInstance::PlayScene(FString sceneName)
 		}
 		else
 		{
+			if(CurrentLevel.ToString() != "LevelFinal")
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Purple, TEXT("PlayMusic"));	
+				UGameplayStatics::PlaySound2D(World, MainMenuMusic, 1.f, 1.f, 0.f);
+			}
+
+			
 			TimerManager->ClearTimer(timerHandle);
 		}
 	}

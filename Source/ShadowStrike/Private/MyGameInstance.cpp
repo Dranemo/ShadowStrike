@@ -68,7 +68,7 @@ void UMyGameInstance::StealItem()
 			Cast<AEnemyCharacter>(FoundActor)->DisbaleAllTimer();
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "StealItem");
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "Stealed");
 		PlayScene("EndGame");
 	}
 }

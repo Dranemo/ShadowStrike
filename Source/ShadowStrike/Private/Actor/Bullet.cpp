@@ -3,6 +3,7 @@
 
 #include "Actor/Bullet.h"
 #include "Character/BaseCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABullet::ABullet()
@@ -20,6 +21,15 @@ void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UNiagaraComponent* NiagaraComp =UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),           
+		NiagaraEffect,          
+		GetActorLocation(),     
+		GetActorLocation().ForwardVector.Rotation()  
+	);
+
+	//GetWorldTimerManager().SetTimer(NiagaraHandle, this, )
+	
 	GetWorld()->GetTimerManager().SetTimer(BulletTimerHandle, this, &ABullet::DestroyBullet, LifeTime, false);
 	BaseMesh->AddImpulse(ImpulseForce * BaseMesh->GetUpVector());
 }

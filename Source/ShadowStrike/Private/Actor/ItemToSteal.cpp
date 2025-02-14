@@ -25,6 +25,7 @@ void AItemToSteal::StealItem()
 {
 	if (UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance()))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "StealItem");
 		GI->StealItem();
 	}
 	Destroy();

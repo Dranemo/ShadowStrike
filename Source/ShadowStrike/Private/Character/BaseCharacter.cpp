@@ -19,6 +19,9 @@ void ABaseCharacter::BeginPlay()
 void ABaseCharacter::Die()
 {
 	IsDead = true;
+	GetMesh()->SetEnableGravity(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Yellow, TEXT("Die"));
 }
 
@@ -51,6 +54,9 @@ void ABaseCharacter::DropWeapon()
 
 	FDetachmentTransformRules WeaponTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, false);
 	WeaponEquipped->DetachFromActor(WeaponTransformRules);
+
+	FVector newLocation(WeaponEquipped->GetActorLocation().X, 0.1f, WeaponEquipped->GetActorLocation().Z);
+	WeaponEquipped->SetActorLocation(newLocation);
 
 	WeaponEquipped = nullptr;
 }

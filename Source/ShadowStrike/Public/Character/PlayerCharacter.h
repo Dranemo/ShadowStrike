@@ -60,6 +60,8 @@ protected:
 	void Hide();
 	void Pickup();
 
+	void StopHideEffect(UParticleSystemComponent* HideEffectComponent);
+
 	UPROPERTY(EditAnywhere, Category = "Controller")
 	UInputMappingContext* PlayerMappingContext;
 
@@ -77,4 +79,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundBase* HideSound;
+
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	UParticleSystem* HideEffect;
+	FTimerHandle HideEffectHandle;
 };

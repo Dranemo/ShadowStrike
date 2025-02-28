@@ -104,11 +104,16 @@ void AEnemyCharacter::WaitDetectionDelay()
 	GetWorldTimerManager().ClearTimer(DetectionDelayTimerHandle);
 	if (CheckPlayerDetection())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Player Detected2");
-		
 		GetWorldTimerManager().SetTimer(RifleTransformTimerHandle, FTimerDelegate::CreateLambda([this]()
 		{
-			SetRifleFiringTransform(FiringWeaponLocation->GetComponentLocation(), FiringWeaponLocation->GetComponentRotation());
+			if (FiringWeaponLocation == nullptr)
+			{
+				GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+			}
+			else
+			{
+				SetRifleFiringTransform(FiringWeaponLocation->GetComponentLocation(), FiringWeaponLocation->GetComponentRotation());
+			}
 		}), 0.01f, true);
 		GetWorldTimerManager().SetTimer(FiringCooldownHandle, this, &AEnemyCharacter::Fire, RifleCooldown, true);
 	}
@@ -137,7 +142,14 @@ void AEnemyCharacter::Fire()
 	{
 		GetWorldTimerManager().SetTimer(RifleTransformTimerHandle, FTimerDelegate::CreateLambda([this]()
 		{
-			SetRifleFiringTransform(WeaponLocation->GetComponentLocation(), WeaponLocation->GetComponentRotation());
+			if (WeaponLocation == nullptr)
+			{
+				GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+			}
+			else
+			{
+				SetRifleFiringTransform(WeaponLocation->GetComponentLocation(), WeaponLocation->GetComponentRotation());
+			}
 		}), 0.01f, true);
 		
 		GetWorldTimerManager().ClearTimer(FiringCooldownHandle);
@@ -148,11 +160,11 @@ void AEnemyCharacter::Fire()
 
 void AEnemyCharacter::SetRifleFiringTransform(FVector TargetLocation, FRotator TargetRotation)
 {
-	if (GetIsDead())
+	if (GetIsDead() || WeaponEquipped == nullptr)
 	{
 		GetWorldTimerManager().ClearTimer(RifleTransformTimerHandle);
+		return;
 	}
-
 	
 	WeaponEquipped->SetActorLocation(FMath::VInterpTo(
 	WeaponEquipped->GetActorLocation(), 
